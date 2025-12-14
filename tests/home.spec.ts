@@ -1,11 +1,6 @@
-import {test, expect} from '@playwright/test';
+import {test, expect} from '../test-options';
 import { PageManager } from '../page-objects/pageManager';
-test.beforeEach(async({page})=>{
 
-await page.goto('/')
- expect(page).toHaveURL('https://automationexercise.com/')
-
-});
 
 
 /**
@@ -18,11 +13,10 @@ await page.goto('/')
 7. Verify success message 'You have been successfully subscribed!' is visible
  */
 
-test('Subscription Test', async ({ page }) => {
+test('Subscription Test', async ({ page,homePage }) => {
 
 
     const pm = new PageManager(page);
-    await  pm.navigateTo.navigateToHomePage();
     await pm.toHomePage.subscribeToNewsletter('example@example.com')
 
 });

@@ -1,13 +1,8 @@
-import {test,expect} from '@playwright/test';
-import {PageManager} from '../page-objects/pageManager';
-test.beforeEach(async({page})=>{
-
-await page.goto('/')
- expect(page).toHaveURL('https://automationexercise.com/')
+import {test,expect} from '../test-options';
 
 
 
-})
+
 
 /**
  * 1. Launch browser
@@ -23,12 +18,10 @@ await page.goto('/')
 11. Click 'Home' button and verify that landed to home page successfully
  */
 
-test('Contact Us Test', async ({ page }) => {
-    
-    const pm = new PageManager(page);
-    await pm.navigateTo.navigateToContactPage();
-    await pm.toContactPage.fillContactForm('Test User', 'test@example.com', '/Users/esrahazinedar/contains_structured_data_detailed_report.csv');
-
+test('Contact Us Test', async ({ page,contactPage}) => {
+  
+    await contactPage.toContactPage.fillContactForm('Test User', 'test@example.com', '/Users/esrahazinedar/contains_structured_data_detailed_report.csv');
+   
 
 
 });

@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 test.beforeEach(async ({ page }) => {
 
     await page.goto('/')
-    expect(page).toHaveURL('https://automationexercise.com/')
+    await expect(page).toHaveURL('https://automationexercise.com/')
 
 })
 
