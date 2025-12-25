@@ -2,7 +2,11 @@
   "name": "shoppingproject_playwright",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+  "test:performance": "jmeter -n -t tests/performance/test-plans/add-to-cart.jmx -l tests/performance/results/results_$(date +%s).jtl -e -o tests/performance/results/report"
+
+
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
