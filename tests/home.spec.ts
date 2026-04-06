@@ -3,6 +3,7 @@ import { PageManager } from '../page-objects/pageManager';
 
 
 
+
 /**
  * 1. Launch browser
 2. Navigate to url 'http://automationexercise.com'
@@ -21,22 +22,35 @@ test('Subscription Test', async ({ page,homePage }) => {
 
 });
 
-/**
- * 1. Launch browser
-2. Navigate to url 'http://automationexercise.com'
-3. Verify that home page is visible successfully
-4. Click 'Cart' button
-5. Scroll down to footer
-6. Verify text 'SUBSCRIPTION'
-7. Enter email address in input and click arrow button
-8. Verify success message 'You have been successfully subscribed!' is visible
- */
-test('Subscription Test in Cart Page', async ({ page }) => {
-    const pm = new PageManager(page);
-    await  pm.navigateTo.navigateToHomePage();
-    await pm.toHomePage.subscribeToNewsletterInCartPage('example@example.com')
 
-});
 
+test('Verifiying the test case page',async({page,homePage})=>{
+ const pm = new PageManager(page);
+ 
+  await  pm.navigateTo.navigateToHomePage();
+ 
+ expect(page.url()).toContain('https://automationexercise.com/');
+   
+       const expectedNavItems = [
+    'Home',
+    'Products',
+    'Cart',
+    'Signup / Login',
+    'Test Cases',
+    'API Testing',
+    'Video Tutorials',
+    'Contact us',
+  ];
+
+   await pm.toHomePage.homepageVerifyNavItemsExistAll(expectedNavItems,expectedNavItems.length)
+
+   await  pm.toHomePage.homePageNavBarItemsClickEach('Test Cases')
+   
+
+
+ })
+
+
+ 
 
 

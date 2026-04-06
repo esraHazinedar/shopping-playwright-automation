@@ -5,6 +5,7 @@ import { ProductPage } from "../page-objects/productPage";
 import { LoginSignUpPage } from "../page-objects/loginSignUpPage";
 import { NavigationPage } from "../page-objects/navigationPage";
 import { ContactPage } from "./contactPage";
+import { CartPage } from "../page-objects/cartPage";
 
 
 
@@ -15,6 +16,7 @@ export class PageManager {
     private readonly loginPage: LoginSignUpPage;
     private readonly navigationPage: NavigationPage;
     private readonly contactPage: ContactPage;
+    private readonly cartPage: CartPage;
     constructor(page: Page) {
         this.page = page;
         this.homePage = new HomePage(page);
@@ -22,6 +24,7 @@ export class PageManager {
         this.loginPage = new LoginSignUpPage(page);
         this.navigationPage = new NavigationPage(page);
         this.contactPage = new ContactPage(page);
+        this.cartPage = new CartPage(page);
     }
 
 
@@ -48,6 +51,27 @@ export class PageManager {
         return this.contactPage;
     }
 
+     get toCartPage() {
+        return this.cartPage;
+    }
+
+
+
+  
+  
+  
+ 
+/**
+ * Close any popup or ad iframe if it exists on the page.
+ * Works for normal "Close" buttons and Google Ads iframe.
+ */
+
 
 
 }
+
+
+
+
+
+

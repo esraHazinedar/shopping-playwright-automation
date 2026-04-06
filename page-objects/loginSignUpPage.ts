@@ -108,7 +108,8 @@ export class LoginSignUpPage {
 
 
     async deleteAccount() {
-        const continueButton = this.page.getByRole('link', { name: 'Continue' })
+        const continueButton = this.page.getByRole('link', { name: 'Continue', exact: true });
+        await continueButton.waitFor({ state: 'visible', timeout: 10000 });
         await continueButton.click()
         await expect(this.page.locator('text= Logged in as ')).toBeVisible()
         await this.page.getByRole('link', { name: ' Delete Account' }).click()

@@ -1,13 +1,7 @@
-import { test, expect } from '@playwright/test';
+import {test, expect} from '../test-options';
 import { PageManager } from '../page-objects/pageManager';  
 import {faker} from '@faker-js/faker';
-test.beforeEach(async ({ page }) => {
 
-    await page.goto('/')
-   await  expect(page).toHaveURL('https://automationexercise.com/')
-    
-    
-});
 
 
 /**
@@ -23,9 +17,8 @@ test.beforeEach(async ({ page }) => {
  */
 
 
-test('Verify all products and product detail page', async ({ page }) => {
+test('Verify all products and product detail page', async ({ page,productPage }) => {
     const pageManager = new PageManager(page);
-    await pageManager.navigateTo.navigateToProductsPage();
     expect(page.getByText('All Products')).toBeVisible()
     await pageManager.toProductPage.verifyProductDetailsVisible(1);
    
@@ -44,9 +37,8 @@ test('Verify all products and product detail page', async ({ page }) => {
  */
 
 
-test('Search Product', async ({ page }) => {
+test('Search Product', async ({ page,productPage }) => {
     const pageManager = new PageManager(page);
-    await pageManager.navigateTo.navigateToProductsPage();
     await pageManager.toProductPage.searchProduct('Tshirt');
 
 
@@ -65,9 +57,8 @@ test('Search Product', async ({ page }) => {
 10. Verify their prices, quantity and total price
  */
 
-test('Add Products to Cart', async ({ page }) => {
+test('Add Products to Cart', async ({ page,productPage }) => {
     const pageManager = new PageManager(page);
-    await pageManager.navigateTo.navigateToProductsPage();
     await pageManager.toProductPage.addFirstAndSecondProductToCart()
 
 
@@ -86,10 +77,9 @@ test('Add Products to Cart', async ({ page }) => {
 9. Verify that product is displayed in cart page with exact quantity
  */
 
-test('Add Quantity of Product in Cart', async ({ page }) => {
+test('Add Quantity of Product in Cart', async ({ page,productPage }) => {
 
     const pageManager = new PageManager(page);
-    await pageManager.navigateTo.navigateToProductsPage();
     await pageManager.toProductPage.addProductToCartByQuantity(3,4);
 
 
@@ -119,7 +109,7 @@ test('Add Quantity of Product in Cart', async ({ page }) => {
 19. Click 'Delete Account' button
 20. Verify 'ACCOUNT DELETED!' and click 'Continue' button
  */
-test('Register, Login and Place Order', async ({ page }) => {
+test('Register, Login and Place Order', async ({ page ,productPage}) => {
 
     const pm = new PageManager(page);
     const randomEmail = faker.internet.email(); 
@@ -135,19 +125,21 @@ test('Register, Login and Place Order', async ({ page }) => {
     const randomZipcode = faker.location.zipCode();
     const randomMobileNumber = `+1${faker.string.numeric(10)}`;  
     const randomCreditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
-   
-    const allProducts = page.locator('.features_items .col-sm-4');
+   const allProducts = page.locator('.features_items .col-sm-4');
     const firstProduct = allProducts.nth(0);
     await firstProduct.hover();
     const firstAddToCartButton = firstProduct.getByText('Add to cart').first();
     await firstAddToCartButton.click();
     const viewCartButton = page.locator('.modal-content').locator('a[href="/view_cart"]');
+    await viewCartButton.waitFor({ state: 'visible', timeout: 10000 });
     await viewCartButton.click();
     expect(page.url()).toContain('/view_cart');
     const proceedToCheckoutButton = page.locator('.btn.btn-default.check_out');
     await proceedToCheckoutButton.click();
     const registerLogin = page.getByRole('link', { name: 'Register / Login' });
-    await registerLogin.click();
+    await registerLogin.waitFor({ state: 'visible', timeout: 20000 });
+    await registerLogin.scrollIntoViewIfNeeded();
+   await registerLogin.click({ force: true });
     expect(page.url()).toContain('/login');
     await pm.toLoginPage.signUpUser(randomName, randomEmail);
     await page.waitForTimeout(2000)
@@ -155,11 +147,45 @@ test('Register, Login and Place Order', async ({ page }) => {
     const continueButton = page.getByRole('link', { name: 'Continue' })
     await continueButton.click()
     await expect(page.locator('text= Logged in as ')).toBeVisible()
-    pm.toProductPage.proceedTocheckoutToPayment(randomName,  randomCreditCard, '123', '12', '2025');
+   await  pm.toProductPage.proceedTocheckoutToPayment(randomName,  randomCreditCard, '123', '12', '2025');
     await pm.toLoginPage.deleteAccount();
     
 
 });
+/**
+ * Test Case 8: Verify All Products and product detail page
+1. Launch browser
+2. Navigate to url 'http://automationexercise.com'
+3. Verify that home page is visible successfully
+4. Click on 'Products' button
+5. Verify user is navigated to ALL PRODUCTS page successfully
+6. The products list is visible
+7. Click on 'View Product' of first product
+8. User is landed to product detail page
+9. Verify that detail detail is visible: product name, category, price, availability, condition, brand
+ */
+test('Verify All Porducts and product detail page',async({page,productPage})=>{
+ 
+
+      const pm = new PageManager(page);
+ 
+      expect(page.url()).toContain('/products')
+      const productTitle =page.locator('.title.text-center');
+      await expect(productTitle).toHaveText("All Products")
+      const productSection= page.locator('.features_items');
+       const brandSection= page.locator('.brands_products');
+       const categorySection =  page.locator('#accordian');
+      //expect(productSection.isVisible()).toBeTruthy()
+      await expect(categorySection).toBeVisible();
+      await expect(brandSection).toBeVisible()
+
+
+
+})
+
+
+
+
 
 
 

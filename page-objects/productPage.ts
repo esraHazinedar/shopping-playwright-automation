@@ -129,7 +129,7 @@ export class ProductPage {
 
     async proceedTocheckoutToPayment(nameOnCard: string, cardNumber: string, cvc: string, expiryMonth: string, expiryYear: string) {
         const cartButton = this.page.getByRole('link', { name: ' Cart' })
-        await cartButton.click()
+       await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
         const proceedToCheckoutButton = this.page.locator('.btn.btn-default.check_out');
         await proceedToCheckoutButton.click()
         expect(this.page.getByText('Address Details')).toBeVisible()

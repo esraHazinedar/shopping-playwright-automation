@@ -1,12 +1,7 @@
-import { test, expect } from '@playwright/test';
+import {test, expect} from '../test-options';
 import { PageManager } from '../page-objects/pageManager';
 import { faker } from '@faker-js/faker';
-test.beforeEach(async ({ page }) => {
 
-    await page.goto('/')
-    await expect(page).toHaveURL('https://automationexercise.com/')
-
-})
 
 
 /**
@@ -31,7 +26,7 @@ test.beforeEach(async ({ page }) => {
  */
 
 
-test('Register a new user', async ({ page }) => {
+test('Register a new user', async ({ page,loginPage }) => {
     const pm = new PageManager(page);
     const randomEmail = faker.internet.email();
     const randomName = faker.person.fullName();
@@ -65,9 +60,8 @@ test('Register a new user', async ({ page }) => {
 9. Click 'Logout' button
 10. Verify that user is navigated to login page
  */
-test('Login with Existing User', async ({ page }) => {
+test('Login with Existing User', async ({ page,loginPage }) => {
     const pm = new PageManager(page);
-    await pm.navigateTo.navigateToLoginSignUpPage();
     await pm.toLoginPage.loginExistingUser('testpp@test.com', '12345');
     expect(page.locator('text= Logged in as ')).toBeVisible()
     await page.getByRole('link', { name: ' Logout' }).click()
@@ -86,11 +80,10 @@ test('Login with Existing User', async ({ page }) => {
 8. Verify error 'Your email or password is incorrect!' is visible
  */
 
-test('Negative Login Test', async ({ page }) => {
+test('Negative Login Test', async ({ page,loginPage }) => {
 
     expect(page.getByText('Login to your account')).toBeVisible()
     const pm = new PageManager(page);
-    await pm.navigateTo.navigateToLoginSignUpPage();
     await pm.toLoginPage.loginExistingUser('testpp@test.com', '12349');
     await expect(page.locator('text=Your email or password is incorrect!')).toBeVisible()
 
@@ -108,9 +101,8 @@ test('Negative Login Test', async ({ page }) => {
 8. Verify error 'Email Address already exist!' is visible
  */
 
-test('Register User With and Existing Email', async ({ page }) => {
+test('Register User With and Existing Email', async ({ page,loginPage }) => {
     const pm = new PageManager(page);
-    await pm.navigateTo.navigateToLoginSignUpPage();
     await pm.toLoginPage.signUpUser('Ezra', 'test@test.com')
     await expect(page.locator('text=Email Address already exist!')).toBeVisible()
 
