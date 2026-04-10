@@ -1,6 +1,7 @@
 import { test as base, expect, Page, Route } from '@playwright/test';
 import { PageManager } from './page-objects/pageManager';
 
+
 export type TestOptions = {
     globalsQaURL: string
     contactPage: PageManager;
@@ -8,6 +9,7 @@ export type TestOptions = {
     productPage: PageManager;
     loginPage: PageManager;
     cartPage: PageManager;
+    pageManager:PageManager
 
 }
 
@@ -66,6 +68,10 @@ export const test = base.extend<TestOptions>({
         await pm.navigateTo.navigateToProductsPage();
         await use(pm)
 
+    },
+    pageManager: async({page,productPage},use)=>{
+      const pm = new PageManager(page)
+      await use (pm)
     },
      cartPage:  async({page,globalsQaURL},use)=>{
  const pm = new PageManager(page)

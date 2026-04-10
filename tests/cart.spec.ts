@@ -1,9 +1,6 @@
 import {test,expect} from '../test-options';
 
 
-
-
-
 /**
  * 1. Launch browser
 2. Navigate to url 'http://automationexercise.com'
@@ -14,7 +11,7 @@ import {test,expect} from '../test-options';
 7. Enter email address in input and click arrow button
 8. Verify success message 'You have been successfully subscribed!' is visible
  */
-test('Subscription Test in Cart Page', async ({ page,cartPage}) => {
+test('Subscription Test in Cart Page', async ({ cartPage}) => {
     
 
     await cartPage.navigateTo.navigateToCartPage()

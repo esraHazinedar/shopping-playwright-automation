@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
-import type{TestOptions} from './test-options'
+import type{TestOptions} from './test-options';
+
+
+
 
 /**
  * Read environment variables from file.
@@ -20,7 +23,10 @@ export default defineConfig<TestOptions>({
 //expect:{
   //timeout:2000
 //},
+ 
+
   testDir: './tests',
+ 
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -84,6 +90,17 @@ export default defineConfig<TestOptions>({
       testMatch: 'contact.spec.ts',
       use: {
         viewport: {width:1920, height:1080}
+      },
+      
+    },
+    {
+      name: 'mobile',
+      testMatch:['testMobile.spec.ts', 'product.spec.ts','contact.spec.ts','login.spec.ts','home.spec.ts'],
+      
+      use:{
+
+        ...devices['iPhone 13 Pro'],
+       viewport: {width:400, height:800}
       }
     }
 

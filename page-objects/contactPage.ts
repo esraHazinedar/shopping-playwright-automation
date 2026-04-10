@@ -21,12 +21,11 @@ async fillContactForm(name: string, email: string, filePath: string) {
     await emailInputBox.click()
     await emailInputBox.fill(email)
     const chooseFileInput = form.getByRole('button', { name: 'Choose File' })
-   // await chooseFileInput.click()
+    await chooseFileInput.click()
     await chooseFileInput.setInputFiles(filePath)
     const submitButton = this.page.locator('input[name="submit"]')
      await submitButton.click();
-   
-    await submitButton.click();
+
     this.page.on('dialog', dialog => dialog.accept());
 }
 }

@@ -4,6 +4,7 @@ import {faker} from '@faker-js/faker';
 
 
 
+
 /**
  * 1. Launch browser
 2. Navigate to url 'http://automationexercise.com'
@@ -17,7 +18,7 @@ import {faker} from '@faker-js/faker';
  */
 
 
-test('Verify all products and product detail page', async ({ page,productPage }) => {
+test('Verify all products and product detail page', async ({ page,productPage },testInfo) => {
     const pageManager = new PageManager(page);
     expect(page.getByText('All Products')).toBeVisible()
     await productPage.toProductPage.verifyProductDetailsVisible(1);
@@ -37,7 +38,7 @@ test('Verify all products and product detail page', async ({ page,productPage })
  */
 
 
-test('Search Product', async ({productPage }) => {
+test('Search Product', async ({productPage,testIdAttribute}) => {
    
     await productPage.toProductPage.searchProduct('Tshirt');
 
@@ -130,7 +131,7 @@ const randomMobileNumber = `+1${faker.string.numeric(10)}`;
 const randomCreditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
 
 // =====================
-// 🛍️ Add product to cart
+//  Add product to cart
 // =====================
 const allProducts = page.locator('.features_items .col-sm-4');
 const firstProduct = allProducts.first();
@@ -239,13 +240,8 @@ await pm.toLoginPage.deleteAccount();
 9. Verify that detail detail is visible: product name, category, price, availability, condition, brand
  */
 test('Verify All Porducts and product detail page',async({productPage})=>{
- 
 
-     
- 
    await  productPage.toProductPage.verifyProductsPageLoaded();
-
-
 
 })
 
