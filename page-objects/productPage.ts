@@ -116,7 +116,7 @@ export class ProductPage {
         await profuctQuantityBox.fill(quantity.toString());
         const addToCartButton = this.page.locator('button[class="btn btn-default cart"]');
         await addToCartButton.click();
-        const viewCartButton = this.page.locator('.modal-content').locator('a[href="/view_cart"]');
+        const viewCartButton = this.page.getByRole('link', { name: 'View Cart' });
         await expect(viewCartButton).toBeVisible()
         await viewCartButton.click();
         expect(this.page.url()).toContain('/view_cart');
@@ -130,8 +130,10 @@ export class ProductPage {
 
 
     async proceedTocheckoutToPayment(nameOnCard: string, cardNumber: string, cvc: string, expiryMonth: string, expiryYear: string) {
-        const cartButton = this.page.getByRole('link', { name: ' Cart' })
-       await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
+       
+         const cartLink= this.page.locator('.navbar-nav').getByText(' Cart');
+         await expect(cartLink).toBeVisible()
+         await cartLink.click()
         const proceedToCheckoutButton = this.page.locator('.btn.btn-default.check_out');
         await proceedToCheckoutButton.click()
        await expect(this.page.getByRole('heading', { name: 'Address Details' })).toBeVisible();
