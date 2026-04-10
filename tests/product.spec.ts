@@ -20,7 +20,7 @@ import {faker} from '@faker-js/faker';
 test('Verify all products and product detail page', async ({ page,productPage }) => {
     const pageManager = new PageManager(page);
     expect(page.getByText('All Products')).toBeVisible()
-    await pageManager.toProductPage.verifyProductDetailsVisible(1);
+    await productPage.toProductPage.verifyProductDetailsVisible(1);
    
 });
 
@@ -37,9 +37,9 @@ test('Verify all products and product detail page', async ({ page,productPage })
  */
 
 
-test('Search Product', async ({ page,productPage }) => {
-    const pageManager = new PageManager(page);
-    await pageManager.toProductPage.searchProduct('Tshirt');
+test('Search Product', async ({productPage }) => {
+   
+    await productPage.toProductPage.searchProduct('Tshirt');
 
 
 });
@@ -57,9 +57,9 @@ test('Search Product', async ({ page,productPage }) => {
 10. Verify their prices, quantity and total price
  */
 
-test('Add Products to Cart', async ({ page,productPage }) => {
-    const pageManager = new PageManager(page);
-    await pageManager.toProductPage.addFirstAndSecondProductToCart()
+test('Add Products to Cart', async ({productPage }) => {
+    
+    await productPage.toProductPage.addFirstAndSecondProductToCart()
 
 
 });
@@ -77,10 +77,9 @@ test('Add Products to Cart', async ({ page,productPage }) => {
 9. Verify that product is displayed in cart page with exact quantity
  */
 
-test('Add Quantity of Product in Cart', async ({ page,productPage }) => {
+test('Add Quantity of Product in Cart', async ({ productPage }) => {
 
-    const pageManager = new PageManager(page);
-    await pageManager.toProductPage.addProductToCartByQuantity(3,4);
+    await productPage.toProductPage.addProductToCartByQuantity(3,4);
 
 
 });
@@ -109,47 +108,122 @@ test('Add Quantity of Product in Cart', async ({ page,productPage }) => {
 19. Click 'Delete Account' button
 20. Verify 'ACCOUNT DELETED!' and click 'Continue' button
  */
-test('Register, Login and Place Order', async ({ page ,productPage}) => {
+test('Register, Login and Place Order', async ({ productPage,page}) => {
 
-    const pm = new PageManager(page);
-    const randomEmail = faker.internet.email(); 
-    const randomName = faker.person.fullName();
-    const randomPassword = faker.internet.password();
-    const randomFirstName = faker.person.firstName();
-    const randomLastName = faker.person.lastName();
-    const randomCompany = faker.company.name();
-    const randomAddress1 = faker.location.streetAddress();
-    const randomAddress2 = faker.location.secondaryAddress();
-    const randomState = faker.location.state();
-    const randomCity = faker.location.city();
-    const randomZipcode = faker.location.zipCode();
-    const randomMobileNumber = `+1${faker.string.numeric(10)}`;  
-    const randomCreditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
-   const allProducts = page.locator('.features_items .col-sm-4');
-    const firstProduct = allProducts.nth(0);
-    await firstProduct.hover();
-    const firstAddToCartButton = firstProduct.getByText('Add to cart').first();
-    await firstAddToCartButton.click();
-    const viewCartButton = page.locator('.modal-content').locator('a[href="/view_cart"]');
-    await viewCartButton.waitFor({ state: 'visible', timeout: 10000 });
-    await viewCartButton.click();
-    expect(page.url()).toContain('/view_cart');
-    const proceedToCheckoutButton = page.locator('.btn.btn-default.check_out');
-    await proceedToCheckoutButton.click();
-    const registerLogin = page.getByRole('link', { name: 'Register / Login' });
-    await registerLogin.waitFor({ state: 'visible', timeout: 20000 });
-    await registerLogin.scrollIntoViewIfNeeded();
-   await registerLogin.click({ force: true });
-    expect(page.url()).toContain('/login');
-    await pm.toLoginPage.signUpUser(randomName, randomEmail);
-    await page.waitForTimeout(2000)
-     await pm.toLoginPage.signUpForm(randomName, randomEmail, randomPassword, randomFirstName, randomLastName, randomCompany, randomAddress1, randomAddress2, randomState, randomCity, randomZipcode, randomMobileNumber);
-    const continueButton = page.getByRole('link', { name: 'Continue' })
-    await continueButton.click()
-    await expect(page.locator('text= Logged in as ')).toBeVisible()
-   await  pm.toProductPage.proceedTocheckoutToPayment(randomName,  randomCreditCard, '123', '12', '2025');
-    await pm.toLoginPage.deleteAccount();
-    
+   const pm = new PageManager(page);
+
+// =====================
+// 🔥 Test Data (Faker)
+// =====================
+const randomEmail = faker.internet.email();
+const randomName = faker.person.fullName();
+const randomPassword = faker.internet.password();
+const randomFirstName = faker.person.firstName();
+const randomLastName = faker.person.lastName();
+const randomCompany = faker.company.name();
+const randomAddress1 = faker.location.streetAddress();
+const randomAddress2 = faker.location.secondaryAddress();
+const randomState = faker.location.state();
+const randomCity = faker.location.city();
+const randomZipcode = faker.location.zipCode();
+const randomMobileNumber = `+1${faker.string.numeric(10)}`;
+const randomCreditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
+
+// =====================
+// 🛍️ Add product to cart
+// =====================
+const allProducts = page.locator('.features_items .col-sm-4');
+const firstProduct = allProducts.first();
+
+await firstProduct.hover();
+
+const addToCartButton = firstProduct.getByText('Add to cart').first();
+await expect(addToCartButton).toBeVisible();
+await addToCartButton.click();
+
+// =====================
+// 🛒 View cart modal
+// =====================
+const viewCartButton = page.locator('.modal-content a[href="/view_cart"]');
+
+await expect(viewCartButton).toBeVisible();
+
+// screenshot AFTER stable state
+await viewCartButton.screenshot({
+  path: 'screenshots/viewcartButton.png',
+});
+
+await viewCartButton.click();
+
+// URL assertion (more stable than string check)
+await expect(page).toHaveURL(/view_cart/);
+
+// =====================
+// 💳 Proceed to checkout
+// =====================
+const proceedToCheckoutButton = page.locator('.btn.btn-default.check_out');
+await expect(proceedToCheckoutButton).toBeVisible();
+await proceedToCheckoutButton.click();
+
+// =====================
+// 🔐 Login/Register
+// =====================
+const registerLogin = page.getByRole('link', {
+  name: 'Register / Login',
+});
+
+await expect(registerLogin).toBeVisible();
+await registerLogin.scrollIntoViewIfNeeded();
+await registerLogin.click();
+
+await expect(page).toHaveURL(/login/);
+
+// =====================
+// 🧾 Sign up
+// =====================
+await pm.toLoginPage.signUpUser(randomName, randomEmail);
+
+await pm.toLoginPage.signUpForm(
+  randomName,
+  randomEmail,
+  randomPassword,
+  randomFirstName,
+  randomLastName,
+  randomCompany,
+  randomAddress1,
+  randomAddress2,
+  randomState,
+  randomCity,
+  randomZipcode,
+  randomMobileNumber
+);
+
+// =====================
+// ▶️ Continue
+// =====================
+const continueButton = page.getByRole('link', { name: 'Continue' });
+
+await expect(continueButton).toBeVisible();
+await continueButton.click();
+
+// IMPORTANT: no sleep, use assertion instead
+await expect(page.getByText(/Logged in as/i)).toBeVisible();
+
+// =====================
+// 💳 Checkout + Payment
+// =====================
+await productPage.toProductPage.proceedTocheckoutToPayment(
+  randomName,
+  randomCreditCard,
+  '123',
+  '12',
+  '2025'
+);
+// =====================
+// 🧹 Delete account
+// =====================
+await pm.toLoginPage.deleteAccount();
+
 
 });
 /**
@@ -164,20 +238,12 @@ test('Register, Login and Place Order', async ({ page ,productPage}) => {
 8. User is landed to product detail page
 9. Verify that detail detail is visible: product name, category, price, availability, condition, brand
  */
-test('Verify All Porducts and product detail page',async({page,productPage})=>{
+test('Verify All Porducts and product detail page',async({productPage})=>{
  
 
-      const pm = new PageManager(page);
+     
  
-      expect(page.url()).toContain('/products')
-      const productTitle =page.locator('.title.text-center');
-      await expect(productTitle).toHaveText("All Products")
-      const productSection= page.locator('.features_items');
-       const brandSection= page.locator('.brands_products');
-       const categorySection =  page.locator('#accordian');
-      //expect(productSection.isVisible()).toBeTruthy()
-      await expect(categorySection).toBeVisible();
-      await expect(brandSection).toBeVisible()
+   await  productPage.toProductPage.verifyProductsPageLoaded();
 
 
 

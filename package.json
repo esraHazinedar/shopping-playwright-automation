@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "test:performance": "jmeter -n -t tests/performance/test-plans/add-to-cart.jmx -l tests/performance/results/results_$(date +%s).jtl -e -o tests/performance/results/report"
+    "test:performance": "jmeter -n -t tests/performance/test-plans/add-to-cart.jmx -l tests/performance/results/results_$(date +%s).jtl -e -o tests/performance/results/report",
+    "cart:chrome": "npx playwright test cart.spec.ts --project=chromium ",
+    "cart:firefox": "npx playwright test cart.spec.ts --project=firefox ",
+    "cart-all": "npm run cart:chrome && npm run cart:firefox",
+    "product:prod": "npx playwright test product.spec.ts --project=prod",
+    "product:firefox": "npx playwright test product.spec.ts --project=prod",
+    "home:prod": "npx playwright test home.spec.ts --project=prod",
+    "contact:prod": "npx playwright test contact.spec.ts --project=prod",
+    "login:prod": "npx playwright test login.spec.ts --project=prod"
 
 
   },
@@ -12,8 +20,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@faker-js/faker": "^10.1.0",
-    "@playwright/test": "^1.54.1",
+    "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^24.1.0"
   }
 }

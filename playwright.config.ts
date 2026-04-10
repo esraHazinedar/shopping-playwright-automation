@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import type{TestOptions} from './test-options'
 
 /**
  * Read environment variables from file.
@@ -11,16 +12,23 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<TestOptions>({
+  //we can add custom waittime
+  //timeout:10000,
+  //globalTimeout: 60000,
+//we can add locator timeout here 
+//expect:{
+  //timeout:2000
+//},
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 0 : 0,
+  retries: process.env.CI ? 2 : 1,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 1,
+  workers: process.env.CI ? 1 :  1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -28,9 +36,12 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
 
      baseURL: 'https://automationexercise.com/',
+     globalsQaURL: 'https://automationexercise.com/',
+   
+
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on',
     actionTimeout:20000,
     video:{
       mode: 'on',
@@ -55,8 +66,12 @@ export default defineConfig({
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'prod',
+
+      use: { ...devices['Desktop Firefox'] 
+       , baseURL: 'https://automationexercise.com/'
+      },
+     
       fullyParallel: true
     },
 

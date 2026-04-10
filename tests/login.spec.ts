@@ -102,11 +102,17 @@ test('Negative Login Test', async ({ page,loginPage }) => {
  */
 
 test('Register User With and Existing Email', async ({ page,loginPage }) => {
-    const pm = new PageManager(page);
-    await pm.toLoginPage.signUpUser('Ezra', 'test@test.com')
-    await expect(page.locator('text=Email Address already exist!')).toBeVisible()
+  //we can use timeout for a test 
+    // test.setTimeout(10000)
+    //test.slow() will inceasr the timeout of timeout from config multiplying with ten seconds
+    await loginPage.toLoginPage.signUpUser('Ezra', 'test@test.com');
 
+  await page.screenshot({ path: 'screenshots/loginPage.png' });
+
+  await expect(page.locator('text=Email Address already exist!')).toBeVisible();
 
 });
+
+
 
 

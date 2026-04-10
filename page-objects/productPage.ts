@@ -27,8 +27,7 @@ export class ProductPage {
 
     }
 
-
-
+    
 
 
 
@@ -40,6 +39,7 @@ export class ProductPage {
         await searchInputBox.click()
         await searchInputBox.fill(productName)
         const searchButton = this.page.locator('#submit_search')
+        await searchButton.waitFor({ state: 'visible' });
         await searchButton.click()
         expect(this.page.getByText('Searched Products')).toBeVisible()
         const searchedProducts = this.page.locator('.features_items');
@@ -67,6 +67,7 @@ export class ProductPage {
         const firstAddToCartButton = firstProduct.getByText('Add to cart').first();
         await firstAddToCartButton.click();
         const continueShoppingButton = this.page.locator('button[data-dismiss="modal"]');
+        await expect(continueShoppingButton).toBeVisible()
         await continueShoppingButton.click();
 
 
@@ -116,6 +117,7 @@ export class ProductPage {
         const addToCartButton = this.page.locator('button[class="btn btn-default cart"]');
         await addToCartButton.click();
         const viewCartButton = this.page.locator('.modal-content').locator('a[href="/view_cart"]');
+        await expect(viewCartButton).toBeVisible()
         await viewCartButton.click();
         expect(this.page.url()).toContain('/view_cart');
         const cartItems = this.page.locator('.cart_info tbody tr');
@@ -132,9 +134,8 @@ export class ProductPage {
        await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
         const proceedToCheckoutButton = this.page.locator('.btn.btn-default.check_out');
         await proceedToCheckoutButton.click()
-        expect(this.page.getByText('Address Details')).toBeVisible()
-        expect(this.page.getByText('Review Your Order')).toBeVisible()
-
+       await expect(this.page.getByRole('heading', { name: 'Address Details' })).toBeVisible();
+        await expect(this.page.getByRole('heading', { name: 'Review Your Order' })).toBeVisible();
         const placeOrderButton = this.page.getByRole('link', { name: 'Place Order' })
         await placeOrderButton.scrollIntoViewIfNeeded()
         await placeOrderButton.click()
@@ -152,5 +153,15 @@ export class ProductPage {
         await payAndConfirmOrderButton.click()
 
     }
+
+    async verifyProductsPageLoaded() {
+  await expect(this.page).toHaveURL(/products/);
+  await expect(this.page.locator('.title.text-center')).toHaveText('All Products');
+  await expect(this.page.locator('#accordian')).toBeVisible();
+  await expect(this.page.locator('.brands_products')).toBeVisible();
+}
+
+
+
 
 }

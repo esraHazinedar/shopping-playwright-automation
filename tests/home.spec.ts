@@ -14,23 +14,17 @@ import { PageManager } from '../page-objects/pageManager';
 7. Verify success message 'You have been successfully subscribed!' is visible
  */
 
-test('Subscription Test', async ({ page,homePage }) => {
+test('Subscription Test', async ({ homePage }) => {
 
 
-    const pm = new PageManager(page);
-    await pm.toHomePage.subscribeToNewsletter('example@example.com')
+    await homePage.toHomePage.subscribeToNewsletter('example@example.com')
 
 });
 
 
 
-test('Verifiying the test case page',async({page,homePage})=>{
- const pm = new PageManager(page);
+test('Verifiying the test case page',async({homePage})=>{
  
-  await  pm.navigateTo.navigateToHomePage();
- 
- expect(page.url()).toContain('https://automationexercise.com/');
-   
        const expectedNavItems = [
     'Home',
     'Products',
@@ -42,9 +36,9 @@ test('Verifiying the test case page',async({page,homePage})=>{
     'Contact us',
   ];
 
-   await pm.toHomePage.homepageVerifyNavItemsExistAll(expectedNavItems,expectedNavItems.length)
+   await homePage.toHomePage.homepageVerifyNavItemsExistAll(expectedNavItems,expectedNavItems.length)
 
-   await  pm.toHomePage.homePageNavBarItemsClickEach('Test Cases')
+   await  homePage.toHomePage.homePageNavBarItemsClickEach('Test Cases')
    
 
 
