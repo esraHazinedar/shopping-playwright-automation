@@ -24,7 +24,11 @@ export default defineConfig<TestOptions>({
   //timeout:2000
 //},
  
+   expect:{
+    timeout:5000,
+    toMatchSnapshot: {maxDiffPixels:50}
 
+   },
   testDir: './tests',
  
   /* Run tests in files in parallel */
@@ -36,13 +40,18 @@ export default defineConfig<TestOptions>({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 :  4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['list'],
+    // ['allure-playwright']
+  
+    ['html']
+  ],
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
 
      baseURL: 'https://automationexercise.com/',
-     globalsQaURL: 'https://automationexercise.com/',
    
 
 
@@ -83,7 +92,7 @@ export default defineConfig<TestOptions>({
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], baseURL: 'https://automationexercise.com/' },
     },
     {
       name: 'productFullScreen',
@@ -125,10 +134,5 @@ export default defineConfig<TestOptions>({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  // webServer removed — automationexercise.com is an external site, not a locally-served app.
 });

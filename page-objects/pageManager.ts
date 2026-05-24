@@ -9,6 +9,7 @@ import { CartPage } from "../page-objects/cartPage";
 
 
 
+
 export class PageManager {
     private readonly page: Page;
     private readonly homePage: HomePage;
@@ -17,6 +18,7 @@ export class PageManager {
     private readonly navigationPage: NavigationPage;
     private readonly contactPage: ContactPage;
     private readonly cartPage: CartPage;
+  
     constructor(page: Page) {
         this.page = page;
         this.homePage = new HomePage(page);
@@ -25,6 +27,7 @@ export class PageManager {
         this.navigationPage = new NavigationPage(page);
         this.contactPage = new ContactPage(page);
         this.cartPage = new CartPage(page);
+     
     }
 
 
@@ -55,6 +58,7 @@ export class PageManager {
         return this.cartPage;
     }
 
+  
 
 
   

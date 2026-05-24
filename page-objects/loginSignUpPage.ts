@@ -93,10 +93,11 @@ export class LoginSignUpPage {
 
 
     async signUpUser(name: string, email: string) {
-        expect(this.page.getByText('New User Signup!')).toBeVisible()
+        await expect(this.page.getByText('New User Signup!')).toBeVisible()
 
         const signUpForm = this.page.locator('.signup-form');
         const nameInputBox = signUpForm.getByPlaceholder('Name')
+        await expect (nameInputBox).toHaveScreenshot({maxDiffPixels:150})
         const emailInputBox = signUpForm.getByPlaceholder('Email Address')
         const signUpButton = signUpForm.getByRole('button', { name: 'Signup' })
         await nameInputBox.click()

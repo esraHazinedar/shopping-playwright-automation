@@ -9,7 +9,8 @@ export type TestOptions = {
     productPage: PageManager;
     loginPage: PageManager;
     cartPage: PageManager;
-    pageManager:PageManager
+    pageManager: PageManager;
+    navBarPage: PageManager;
 
 }
 
@@ -34,7 +35,7 @@ export const test = base.extend<TestOptions>({
    
    //globalsQaURL: ['', { option: true }] ,
   
-  globalsQaURL: async ({ page }, use, testInfo) => {
+  globalsQaURL: async ({page }, use, testInfo) => {
     console.log('Running environment:', testInfo.project.name);
     // Use testInfo.project.use.baseURL
     const envURL = testInfo.project.use.baseURL as string;
@@ -69,7 +70,7 @@ export const test = base.extend<TestOptions>({
         await use(pm)
 
     },
-    pageManager: async({page,productPage},use)=>{
+    pageManager: async({page},use)=>{
       const pm = new PageManager(page)
       await use (pm)
     },
@@ -90,7 +91,16 @@ export const test = base.extend<TestOptions>({
         await pm.navigateTo.navigateToLoginSignUpPage();
         await use(pm)
 
-    }
+    },
+
+    navBarPage: async ({ page, globalsQaURL }, use) => {
+        const pm = new PageManager(page);
+        await blockAdsBeforeLoad(page);
+        await page.goto(globalsQaURL);
+        await expect(page).toHaveURL(globalsQaURL);
+        await pm.navigateTo.navigateToHomePage();
+        await use(pm);
+    },
 })
 
 export{expect}

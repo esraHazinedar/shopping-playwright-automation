@@ -10,3 +10,19 @@ playwright/.cache/
 
 # Performance test results
 tests/performance/results/
+
+# Allure reports (generated output)
+allure-report/
+allure-results/
+
+
+# logs
+*.log
+
+# Playwright temp artifacts
+**/test-results/
+**/playwright-report/
+
+# Claude Code local settings (personal overrides)
+.claude/settings.local.json
+

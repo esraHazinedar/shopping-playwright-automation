@@ -10,7 +10,7 @@ export class ContactPage{
 
 
 async fillContactForm(name: string, email: string, filePath: string) {
-    expect  (this.page.getByText('Get In Touch')).toBeVisible()
+    await expect(this.page.getByText('Get In Touch')).toBeVisible()
     const form = this.page.locator('#form-section');
      await form.scrollIntoViewIfNeeded();
     const nameInputBox = form.getByPlaceholder('Name')

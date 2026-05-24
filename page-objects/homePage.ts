@@ -11,7 +11,7 @@ export class HomePage {
     async subscribeToNewsletter(email: string) {
 
         await this.page.locator('footer').scrollIntoViewIfNeeded();
-        expect(this.page.getByText('Subscription')).toBeVisible();
+        await expect(this.page.getByText('Subscription')).toBeVisible();
         const emailInputBox = this.page.getByPlaceholder('Your email address')
         await emailInputBox.click()
         await emailInputBox.fill(email);
@@ -57,6 +57,50 @@ export class HomePage {
             await expect(navLinks.nth(i)).toContainText(expectedNavItems[i]);
         };
 
+    }
+
+    async subscribeWithInvalidEmail(email: string) {
+        await this.page.locator('footer').scrollIntoViewIfNeeded();
+        await expect(this.page.getByText('Subscription')).toBeVisible();
+        const emailInputBox = this.page.getByPlaceholder('Your email address');
+        await emailInputBox.click();
+        await emailInputBox.fill(email);
+        const arrowButton = this.page.locator('footer button[type="submit"]');
+        await arrowButton.click();
+        await expect(this.page.getByText('You have been successfully subscribed!')).toBeHidden();
+    }
+
+    async subscribeWithEmptyEmail() {
+        await this.page.locator('footer').scrollIntoViewIfNeeded();
+        await expect(this.page.getByText('Subscription')).toBeVisible();
+        const arrowButton = this.page.locator('footer button[type="submit"]');
+        await arrowButton.click();
+        await expect(this.page.getByText('You have been successfully subscribed!')).toBeHidden();
+    }
+
+    async addToCartFromRecommendedItems() {
+        await this.page.locator('.recommended_items').scrollIntoViewIfNeeded();
+        await expect(this.page.getByText('recommended items', { exact: false })).toBeVisible();
+        const addToCartLink = this.page.locator('.recommended_items .add-to-cart').first();
+        await addToCartLink.click();
+        const viewCartButton = this.page.locator('.modal-content a[href="/view_cart"]');
+        await viewCartButton.waitFor({ state: 'visible', timeout: 8000 });
+        await viewCartButton.click();
+        await expect(this.page).toHaveURL(/view_cart/);
+        await expect(this.page.locator('.cart_info tbody tr').first()).toBeVisible();
+    }
+
+    async subscribeAfterClearingInvalidEntry(invalidEmail: string, validEmail: string) {
+        await this.page.locator('footer').scrollIntoViewIfNeeded();
+        await expect(this.page.getByText('Subscription')).toBeVisible();
+        const emailInputBox = this.page.getByPlaceholder('Your email address');
+        await emailInputBox.click();
+        await emailInputBox.fill(invalidEmail);
+        await emailInputBox.clear();
+        await emailInputBox.fill(validEmail);
+        const arrowButton = this.page.locator('footer button[type="submit"]');
+        await arrowButton.click();
+        await expect(this.page.getByText('You have been successfully subscribed!')).toBeVisible();
     }
 
 

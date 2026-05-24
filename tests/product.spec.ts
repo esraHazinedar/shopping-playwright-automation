@@ -109,6 +109,8 @@ test('Add Quantity of Product in Cart', async ({ productPage }) => {
 19. Click 'Delete Account' button
 20. Verify 'ACCOUNT DELETED!' and click 'Continue' button
  */
+
+
 test('Register, Login and Place Order', async ({ productPage,page}) => {
 
    const pm = new PageManager(page);
@@ -147,9 +149,9 @@ await addToCartButton.click();
 // =====================
 const viewCartButton = page.locator('.modal-content a[href="/view_cart"]');
 
-await expect(viewCartButton).toBeVisible();
+// wait for Bootstrap modal fade to complete before screenshotting or clicking
+await viewCartButton.waitFor({ state: 'visible', timeout: 8000 });
 
-// screenshot AFTER stable state
 await viewCartButton.screenshot({
   path: 'screenshots/viewcartButton.png',
 });
@@ -218,7 +220,7 @@ await productPage.toProductPage.proceedTocheckoutToPayment(
   randomCreditCard,
   '123',
   '12',
-  '2025'
+  String(new Date().getFullYear() + 2)
 );
 // =====================
 // 🧹 Delete account
@@ -244,6 +246,196 @@ test('Verify All Porducts and product detail page',async({productPage})=>{
    await  productPage.toProductPage.verifyProductsPageLoaded();
 
 })
+
+
+// ── Edge Cases ────────────────────────────────────────────────────────────────
+
+test('Add minimum quantity (1) of a product to cart via quantity input', async ({ productPage }) => {
+    // Boundary: qty input explicitly set to 1; product index 1 (distinct from existing index 3 / qty 4 test)
+    await productPage.toProductPage.addProductToCartByQuantity(1, 1);
+});
+
+test('products page displays a non-empty product grid on load', async ({ productPage }) => {
+    await productPage.toProductPage.verifyProductListNonEmpty();
+});
+
+test('search for a term with no matching products shows empty results state', async ({ productPage }) => {
+    await productPage.toProductPage.searchProductExpectNoResults('xyznonexistentproduct12345');
+});
+
+test('submitting search with empty input does not crash or redirect', async ({ productPage }) => {
+    await productPage.toProductPage.searchWithEmptyTerm();
+});
+
+// ── Recovery Flows ────────────────────────────────────────────────────────────
+
+test('search results update correctly after correcting a wrong search term', async ({ productPage }) => {
+    await productPage.toProductPage.clearSearchAndSearchAgain('xyzwrong', 'Tshirt');
+});
+
+// ── Negative Scenarios ────────────────────────────────────────────────────────
+
+test('search with special characters does not cause an error page', async ({ productPage }) => {
+    await productPage.toProductPage.searchProductWithSpecialChars('@#$%^&*');
+});
+
+// ─── Place Order: Registered Before Checkout ──────────────────────────────────
+
+test('Place Order: registered before checkout — place order and delete account', async ({ loginPage, page }) => {
+    const email = faker.internet.email();
+    const name = faker.person.fullName();
+    const password = faker.internet.password();
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const company = faker.company.name();
+    const address1 = faker.location.streetAddress();
+    const address2 = faker.location.secondaryAddress();
+    const state = faker.location.state();
+    const city = faker.location.city();
+    const zip = faker.location.zipCode();
+    const mobile = `+1${faker.string.numeric(10)}`;
+    const creditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
+
+    await loginPage.toLoginPage.signUpUser(name, email);
+    await loginPage.toLoginPage.signUpForm(name, email, password, firstName, lastName, company, address1, address2, state, city, zip, mobile);
+
+    const continueButton = page.getByRole('link', { name: 'Continue' });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
+    await expect(page.getByText(/Logged in as/i)).toBeVisible();
+
+    await loginPage.navigateTo.navigateToProductsPage();
+    await loginPage.toProductPage.addFirstProductToCartAndViewCart();
+    await loginPage.toProductPage.proceedTocheckoutToPayment(name, creditCard, '123', '12', String(new Date().getFullYear() + 2));
+
+    await expect(page.getByText('Congratulations! Your order has been confirmed!')).toBeVisible();
+    await loginPage.toLoginPage.deleteAccount();
+});
+
+// ─── Place Order: Login Before Checkout ──────────────────────────────────────
+
+test('Place Order: login before checkout — place order successfully', async ({ productPage, page }) => {
+    const creditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
+
+    await productPage.toProductPage.addFirstProductToCartAndViewCart();
+    await productPage.toProductPage.proceedToCheckoutClickRegisterLogin();
+    await productPage.toLoginPage.loginExistingUser('testpp@test.com', '12345');
+    await expect(page.getByText(/Logged in as/i)).toBeVisible();
+
+    await productPage.toProductPage.proceedTocheckoutToPayment('Test User', creditCard, '123', '12', String(new Date().getFullYear() + 2));
+
+    await expect(page.getByText('Congratulations! Your order has been confirmed!')).toBeVisible();
+});
+
+// ─── Remove Products from Cart ────────────────────────────────────────────────
+
+test('Remove Products from Cart: removing a product updates the cart item count', async ({ productPage }) => {
+    await productPage.toProductPage.addFirstAndSecondProductToCart();
+    await productPage.toCartPage.removeFirstProductFromCart();
+});
+
+// ─── View Category Products ───────────────────────────────────────────────────
+
+test('View Category Products: Women > Dress shows a filtered product list', async ({ productPage }) => {
+    await productPage.toProductPage.viewProductsByCategory('Women', 'Dress');
+});
+
+// ─── View and Cart Brand Products ────────────────────────────────────────────
+
+test('View and Cart Brand Products: Polo brand page shows products and first item adds to cart', async ({ productPage }) => {
+    await productPage.toProductPage.viewAndCartBrandProducts('Polo');
+});
+
+// ─── Search Products and Verify Cart After Login ──────────────────────────────
+
+test('Search Products and Verify Cart After Login: cart items persist after signing in', async ({ productPage, page }) => {
+    await productPage.toProductPage.addSearchedProductsToCart('Tshirt');
+    await productPage.navigateTo.navigateToLoginSignUpPage();
+    await productPage.toLoginPage.loginExistingUser('testpp@test.com', '12345');
+    await expect(page.getByText(/Logged in as/i)).toBeVisible();
+    await productPage.navigateTo.navigateToCartPage();
+    await expect(page).toHaveURL(/view_cart/);
+    await productPage.toCartPage.verifyCartIsNotEmpty();
+});
+
+// ─── Add Review on Product ────────────────────────────────────────────────────
+
+test('Add Review on Product: submitting a review on a product page shows success message', async ({ productPage }) => {
+    await productPage.toProductPage.addReviewOnProduct(
+        faker.person.fullName(),
+        faker.internet.email(),
+        faker.lorem.sentences(2)
+    );
+});
+
+// ─── Verify Address Details at Checkout ──────────────────────────────────────
+
+test('Verify Address Details at Checkout: delivery address matches registered account details', async ({ loginPage, page }) => {
+    const email = faker.internet.email();
+    const name = faker.person.fullName();
+    const password = faker.internet.password();
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const company = faker.company.name();
+    const address1 = faker.location.streetAddress();
+    const address2 = faker.location.secondaryAddress();
+    const state = faker.location.state();
+    const city = faker.location.city();
+    const zip = faker.location.zipCode();
+    const mobile = `+1${faker.string.numeric(10)}`;
+    const creditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
+
+    await loginPage.toLoginPage.signUpUser(name, email);
+    await loginPage.toLoginPage.signUpForm(name, email, password, firstName, lastName, company, address1, address2, state, city, zip, mobile);
+
+    const continueButton = page.getByRole('link', { name: 'Continue' });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
+    await expect(page.getByText(/Logged in as/i)).toBeVisible();
+
+    await loginPage.navigateTo.navigateToProductsPage();
+    await loginPage.toProductPage.addFirstProductToCartAndViewCart();
+    await loginPage.toCartPage.clickProceedToCheckout();
+    await loginPage.toCartPage.verifyDeliveryAddress(firstName, address1);
+
+    await loginPage.toProductPage.proceedTocheckoutToPayment(name, creditCard, '123', '12', String(new Date().getFullYear() + 2));
+    await expect(page.getByText('Congratulations! Your order has been confirmed!')).toBeVisible();
+    await loginPage.toLoginPage.deleteAccount();
+});
+
+// ─── Download Invoice After Order ────────────────────────────────────────────
+
+test('Download Invoice After Order: invoice file downloads successfully after placing an order', async ({ loginPage, page }) => {
+    const email = faker.internet.email();
+    const name = faker.person.fullName();
+    const password = faker.internet.password();
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const company = faker.company.name();
+    const address1 = faker.location.streetAddress();
+    const address2 = faker.location.secondaryAddress();
+    const state = faker.location.state();
+    const city = faker.location.city();
+    const zip = faker.location.zipCode();
+    const mobile = `+1${faker.string.numeric(10)}`;
+    const creditCard = faker.finance.creditCardNumber({ issuer: 'visa' });
+
+    await loginPage.toLoginPage.signUpUser(name, email);
+    await loginPage.toLoginPage.signUpForm(name, email, password, firstName, lastName, company, address1, address2, state, city, zip, mobile);
+
+    const continueButton = page.getByRole('link', { name: 'Continue' });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
+    await expect(page.getByText(/Logged in as/i)).toBeVisible();
+
+    await loginPage.navigateTo.navigateToProductsPage();
+    await loginPage.toProductPage.addFirstProductToCartAndViewCart();
+    await loginPage.toProductPage.proceedTocheckoutToPayment(name, creditCard, '123', '12', String(new Date().getFullYear() + 2));
+    await expect(page.getByText('Congratulations! Your order has been confirmed!')).toBeVisible();
+
+    await loginPage.toCartPage.downloadInvoiceAfterOrder();
+    await loginPage.toLoginPage.deleteAccount();
+});
 
 
 

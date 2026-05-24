@@ -63,7 +63,7 @@ test('Register a new user', async ({ page,loginPage }) => {
 test('Login with Existing User', async ({ page,loginPage }) => {
     const pm = new PageManager(page);
     await pm.toLoginPage.loginExistingUser('testpp@test.com', '12345');
-    expect(page.locator('text= Logged in as ')).toBeVisible()
+    await expect(page.locator('text= Logged in as ')).toBeVisible()
     await page.getByRole('link', { name: ' Logout' }).click()
     await expect(page).toHaveURL('https://automationexercise.com/login')
 });
