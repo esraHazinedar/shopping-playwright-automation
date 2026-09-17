@@ -1,0 +1,2 @@
+tests/performance/ linguist-vendored
+*.ts linguist-language=TypeScript
