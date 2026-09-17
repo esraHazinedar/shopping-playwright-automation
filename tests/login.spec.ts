@@ -82,7 +82,7 @@ test('Login with Existing User', async ({ page,loginPage }) => {
 
 test('Negative Login Test', async ({ page,loginPage }) => {
 
-    expect(page.getByText('Login to your account')).toBeVisible()
+    await expect(page.getByText('Login to your account')).toBeVisible()
     const pm = new PageManager(page);
     await pm.toLoginPage.loginExistingUser('testpp@test.com', '12349');
     await expect(page.locator('text=Your email or password is incorrect!')).toBeVisible()

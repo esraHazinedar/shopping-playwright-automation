@@ -7,7 +7,7 @@
     "cart:chrome": "npx playwright test cart.spec.ts --project=chromium ",
     "cart:firefox": "npx playwright test cart.spec.ts --project=prod ",
     "cart-all": "npm run cart:chrome && npm run cart:firefox",
-    "product:prod": "npx playwright test product.spec.ts --project=prod",
+    "product:prod": "npx playwright test product.spec.ts --project=chromium --workers=4",
     "product:firefox": "npx playwright test product.spec.ts --project=prod",
     "home:prod": "npx playwright test home.spec.ts --project=prod",
     "contact:prod": "npx playwright test contact.spec.ts --project=prod",

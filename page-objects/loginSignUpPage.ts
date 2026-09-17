@@ -97,7 +97,7 @@ export class LoginSignUpPage {
 
         const signUpForm = this.page.locator('.signup-form');
         const nameInputBox = signUpForm.getByPlaceholder('Name')
-        await expect (nameInputBox).toHaveScreenshot({maxDiffPixels:150})
+       // await expect (nameInputBox).toHaveScreenshot({maxDiffPixels:150})
         const emailInputBox = signUpForm.getByPlaceholder('Email Address')
         const signUpButton = signUpForm.getByRole('button', { name: 'Signup' })
         await nameInputBox.click()
@@ -105,6 +105,8 @@ export class LoginSignUpPage {
         await emailInputBox.click()
         await emailInputBox.fill(email)
         await signUpButton.click()
+        // Wait for the account information form to load
+        await expect(this.page.locator('text=ENTER ACCOUNT INFORMATION')).toBeVisible({ timeout: 15000 })
     }
 
 

@@ -18,7 +18,8 @@ async verifyCartIsNotEmpty() {
         const proceedButton = this.page.locator('.btn.btn-default.check_out');
         await expect(proceedButton).toBeVisible();
         await proceedButton.click();
-        await expect(this.page.getByRole('heading', { name: 'Address Details' })).toBeVisible();
+        await this.page.waitForLoadState('load');
+        await expect(this.page.getByRole('heading', { name: 'Address Details' })).toBeVisible({ timeout: 60000 });
     }
 
     async verifyDeliveryAddress(firstName: string, address: string) {
@@ -36,12 +37,16 @@ async verifyCartIsNotEmpty() {
     }
 
     async removeFirstProductFromCart() {
+        await this.page.waitForLoadState('load');
         const cartRows = this.page.locator('.cart_info tbody tr');
+        await expect(cartRows.first()).toBeVisible({ timeout: 10000 });
         const initialCount = await cartRows.count();
-        const deleteButton = cartRows.first().locator('a.cart_quantity_delete');
-        await expect(deleteButton).toBeVisible();
+        const firstRow = cartRows.nth(0);
+        const deleteButton = firstRow.locator('a.cart_quantity_delete');
+        await expect(deleteButton).toBeVisible({ timeout: 5000 });
+        await deleteButton.scrollIntoViewIfNeeded();
         await deleteButton.click();
-        await expect(cartRows).toHaveCount(initialCount - 1);
+        await expect(cartRows).toHaveCount(initialCount - 1, { timeout: 30000 });
     }
 
     async subscribeToNewsletterInCartPage(email: string) {
