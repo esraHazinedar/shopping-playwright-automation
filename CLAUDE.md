@@ -83,6 +83,16 @@ Tests receive a `PageManager` through fixtures (e.g., `{ loginPage }`). When a t
 - The `mobile` project uses iPhone 13 Pro device with viewport overridden to 400×800.
 - The `productFullScreen` project runs `contact.spec.ts` only at 1920×1080.
 
+## Test documentation (`docs/`)
+
+`docs/test-cases/<page>-test-cases.md` and `docs/RTM.md` are living
+documentation, committed to git and kept in sync with `tests/` —
+`docs/RTM.md` maps every documented test case to its exact automated test
+(or states why it's intentionally not automated). `docs/reports/*.html` is
+a living coverage report, also committed, updated in the same change
+whenever the underlying automation changes. Full rules in
+`.claude/rules/test-documentation.md`.
+
 ## Known issues & gotchas
 
 **`signUpUser()` always runs a snapshot assertion** — `LoginSignUpPage.signUpUser()` calls `toHaveScreenshot()` on the name input before filling it. First run on a new machine will fail until baselines are generated with `npx playwright test --update-snapshots`. Commit the files from `tests/login.spec.ts-snapshots/`.
