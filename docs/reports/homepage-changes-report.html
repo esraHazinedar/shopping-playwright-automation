@@ -1,0 +1,330 @@
+<title>Homepage Coverage Audit</title>
+<meta name="description" content="Change report: new homepage add-to-cart automation, full test case catalog, and RTM coverage for automationexercise.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f7f5f1;
+    --surface:#ffffff;
+    --surface-2:#f0ede6;
+    --border:#ddd7c9;
+    --text:#211f1a;
+    --text-dim:#6b6656;
+    --accent:#2f6f62;
+    --accent-soft:#e2ede9;
+    --good:#2f7a4f;
+    --good-soft:#e4f2e8;
+    --skip:#9a6a1f;
+    --skip-soft:#f6ecd9;
+    --mono-bg:#1c1b17;
+    --mono-text:#eae6da;
+    --mono-dim:#8f8a78;
+    --mono-good:#7fce9a;
+    --shadow: 0 1px 2px rgba(33,31,26,0.06), 0 8px 24px -12px rgba(33,31,26,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15140f;
+      --surface:#1d1c16;
+      --surface-2:#242219;
+      --border:#3a3728;
+      --text:#efece2;
+      --text-dim:#a39d87;
+      --accent:#5fb39d;
+      --accent-soft:#20302a;
+      --good:#6fc98f;
+      --good-soft:#1d2c21;
+      --skip:#d7a04a;
+      --skip-soft:#332a17;
+      --mono-bg:#0e0d0a;
+      --mono-text:#e9e5d8;
+      --mono-dim:#8f8a78;
+      --mono-good:#7fce9a;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15140f;
+    --surface:#1d1c16;
+    --surface-2:#242219;
+    --border:#3a3728;
+    --text:#efece2;
+    --text-dim:#a39d87;
+    --accent:#5fb39d;
+    --accent-soft:#20302a;
+    --good:#6fc98f;
+    --good-soft:#1d2c21;
+    --skip:#d7a04a;
+    --skip-soft:#332a17;
+    --mono-bg:#0e0d0a;
+    --mono-text:#e9e5d8;
+    --mono-dim:#8f8a78;
+    --mono-good:#7fce9a;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    padding-inline:20px;
+    padding-block:40px 64px;
+    line-height:1.55;
+  }
+  .wrap{ max-width:840px; margin-inline:auto; }
+
+  header.top{
+    display:flex; flex-direction:column; gap:10px;
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600;
+  }
+  h1{
+    font-family:'Libre Franklin', sans-serif;
+    font-weight:800; font-size:clamp(28px,5vw,38px);
+    margin:0; text-wrap:balance; letter-spacing:-0.01em;
+  }
+  .sub{ color:var(--text-dim); font-size:15px; max-width:60ch; }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:8px 18px;
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--text-dim);
+    margin-top:4px;
+  }
+  .meta-row b{ color:var(--text); font-weight:600; }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px; margin:28px 0 40px;
+  }
+  .stat{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .stat .n{ font-family:'Libre Franklin',sans-serif; font-weight:800; font-size:28px; line-height:1; }
+  .stat .l{ font-size:12px; color:var(--text-dim); margin-top:6px; text-transform:uppercase; letter-spacing:.05em; }
+  .stat.accent .n{ color:var(--accent); }
+  .stat.good .n{ color:var(--good); }
+  .stat.skip .n{ color:var(--skip); }
+
+  section{ margin-bottom:44px; }
+  h2{
+    font-family:'Libre Franklin', sans-serif; font-weight:700; font-size:20px;
+    display:flex; align-items:center; gap:10px;
+    margin:0 0 6px;
+  }
+  h2 .idx{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent);
+    border:1px solid var(--border); border-radius:5px; padding:2px 7px;
+  }
+  .lede{ color:var(--text-dim); font-size:14.5px; margin:0 0 18px; max-width:66ch; }
+
+  .filelist{ display:flex; flex-direction:column; gap:12px; }
+  .file{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .file .path{
+    font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500;
+    padding:10px 14px; background:var(--surface-2); border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; gap:10px; align-items:center;
+  }
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.03em;
+    padding:2px 8px; border-radius:20px; white-space:nowrap;
+  }
+  .badge.new{ background:var(--good-soft); color:var(--good); }
+  .badge.mod{ background:var(--accent-soft); color:var(--accent); }
+  .file .desc{ padding:10px 14px; font-size:13.5px; color:var(--text-dim); }
+  .file .desc code{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--text); }
+
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  .tbl-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); }
+  th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  thead th{
+    background:var(--surface-2); font-family:'IBM Plex Mono',monospace; font-weight:600;
+    font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-dim);
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody{ background:var(--surface); }
+  td.id{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent); white-space:nowrap; }
+  .status{ display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:500; white-space:nowrap; }
+  .status.auto{ color:var(--good); }
+  .status.skip{ color:var(--skip); }
+  .dot{ width:7px; height:7px; border-radius:50%; display:inline-block; }
+  .dot.auto{ background:var(--good); }
+  .dot.skip{ background:var(--skip); }
+
+  .term{
+    background:var(--mono-bg); color:var(--mono-text); border-radius:10px;
+    padding:16px 18px; font-family:'IBM Plex Mono',monospace; font-size:12.8px;
+    line-height:1.7; overflow-x:auto; box-shadow:var(--shadow);
+  }
+  .term .dim{ color:var(--mono-dim); }
+  .term .pass{ color:var(--mono-good); }
+  .term .cmd{ color:var(--mono-text); font-weight:600; }
+
+  .callout{
+    border:1px solid var(--border); background:var(--accent-soft);
+    border-radius:10px; padding:14px 16px; font-size:13.5px; color:var(--text);
+  }
+  .callout b{ color:var(--accent); }
+
+  footer{
+    margin-top:56px; padding-top:18px; border-top:1px solid var(--border);
+    font-size:12.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;
+  }
+
+  @media (max-width:520px){
+    .meta-row{ flex-direction:column; gap:4px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Living coverage report — updated per change</div>
+    <h1>Homepage Coverage Audit</h1>
+    <p class="sub">Tracks homepage test coverage over time: what's automated, what's intentionally not, and why. Regenerated whenever the homepage automation changes — treat it as the current state, not a frozen snapshot.</p>
+    <div class="meta-row">
+      <span><b>Target:</b> automationexercise.com homepage</span>
+      <span><b>Last updated:</b> 2026-09-18</span>
+      <span><b>Branch:</b> main</span>
+    </div>
+  </header>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">22</div><div class="l">Test cases documented</div></div>
+    <div class="stat accent"><div class="n">3</div><div class="l">New tests added</div></div>
+    <div class="stat good"><div class="n">19</div><div class="l">Automated / cross-referenced</div></div>
+    <div class="stat skip"><div class="n">3</div><div class="l">Deliberately not automated</div></div>
+  </div>
+
+  <section>
+    <h2><span class="idx">01</span> What changed</h2>
+    <p class="lede">Two files modified, three new documents added. No existing test was touched or removed.</p>
+    <div class="filelist">
+      <div class="file">
+        <div class="path">page-objects/homePage.ts <span class="badge mod">modified</span></div>
+        <div class="desc">Added <code>addToCartFromFeaturesItemsAndViewCart()</code>, <code>addToCartFromFeaturesItemsAndContinueShopping()</code> — the Features Items grid uses a different DOM component (<code>.features_items .add-to-cart</code>) than the already-automated Recommended Items carousel — and <code>verifyNoBrokenProductImages()</code>.</div>
+      </div>
+      <div class="file">
+        <div class="path">page-objects/utils/imageAssertions.ts <span class="badge new">new</span></div>
+        <div class="desc">Shared helper <code>verifyNoBrokenImages(images: Locator)</code> — DOM-level check (<code>img.complete</code> / <code>naturalWidth</code>), not a visual/screenshot comparison. Extracted so any page object (Products, Cart, category/brand pages) can reuse it, per explicit request.</div>
+      </div>
+      <div class="file">
+        <div class="path">tests/home.spec.ts <span class="badge mod">modified</span></div>
+        <div class="desc">Added 3 tests wired to the new methods, via the existing <code>homePage</code> fixture — no new fixture or navigation logic required.</div>
+      </div>
+      <div class="file">
+        <div class="path">docs/test-cases/homepage-test-cases.md <span class="badge new">new</span></div>
+        <div class="desc">21 test cases (happy / negative / edge / navigation / recovery), each with type, priority, and evidence from the live page — no fabricated scenarios.</div>
+      </div>
+      <div class="file">
+        <div class="path">docs/RTM.md <span class="badge new">new</span></div>
+        <div class="desc">Requirement Traceability Matrix — every test case maps to an exact file, test title, and page object method, or states why it's excluded.</div>
+      </div>
+      <div class="file">
+        <div class="path">docs/reports/homepage-changes-report.html <span class="badge new">new</span></div>
+        <div class="desc">This report.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">02</span> Why these three tests</h2>
+    <p class="lede">The homepage already had strong coverage (nav, subscription, Recommended Items add-to-cart). Three real gaps remained:</p>
+    <div class="callout" style="margin-bottom:10px;">
+      <b>Features Items add-to-cart</b> had zero coverage. It looks similar to Recommended Items but is a separate grid, a separate CSS scope, and the primary product-discovery surface on the page — the first thing most visitors see.
+    </div>
+    <div class="callout" style="margin-bottom:10px;">
+      <b>"Continue Shopping"</b> was not automated anywhere in the repository — confirmed by a repo-wide search that found only a docstring comment, no executable test. Every existing add-to-cart test only exercises the "View Cart" branch of the confirmation modal.
+    </div>
+    <div class="callout">
+      <b>Broken product images</b> — raised directly by the reviewer: a broken product photo undermines trust and can cost sales, and nothing checked for it anywhere in the suite. Added as a DOM-level check, not a screenshot diff, so it survives legitimate visual changes to the products.<br><br>
+      <b>Caught during implementation:</b> the first version flagged 6 images as "broken." Before trusting that result, each URL was independently checked with <code>curl</code> — all 6 returned HTTP 200 with real image bytes. The real bug was in the check itself: it ran before a long, eagerly-loaded image grid had finished downloading. Fixed by polling for <code>img.complete</code> before asserting <code>naturalWidth</code>, then re-verified.
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">03</span> What was deliberately left out</h2>
+    <p class="lede">Category and brand sidebar filtering were <b>not</b> re-automated on the homepage — they're already covered from the Products page in <code>product.spec.ts</code>, using the identical shared <code>#accordian</code> / <code>.brands_products</code> components. Three more items are documented but intentionally not automated at all:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Hero carousel (arrows, dots)</td><td>Marketing banner, no business logic, content changes often — brittle for no value</td></tr>
+          <tr><td>Scroll-to-top button</td><td>Cosmetic convenience, zero business impact if broken</td></tr>
+          <tr><td>Ad-overlay resilience</td><td>Already mitigated structurally by <code>blockAdsBeforeLoad()</code> on every fixture, not by a functional test</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">04</span> Full test case catalog</h2>
+    <p class="lede">Complete list — see <code>docs/test-cases/homepage-test-cases.md</code> for steps and expected results per case.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Type</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="id">TC-HOME-001</td><td>All primary nav items present</td><td>UI State</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-002</td><td>Nav → Products</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-003</td><td>Nav → Cart</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-004</td><td>Nav → Signup / Login</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-005</td><td>Nav → Contact us</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-006</td><td>Nav → Test Cases</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-007</td><td>Footer subscription visible pre-interaction</td><td>UI State</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-008</td><td>Subscribe — valid email</td><td>Happy path</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-009</td><td>Subscribe — invalid email format</td><td>Negative</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-010</td><td>Subscribe — empty email</td><td>Edge case</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-011</td><td>Subscribe recovery after invalid entry</td><td>Recovery</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-012</td><td>Features Items section visible on load</td><td>UI State</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr style="background:var(--accent-soft);"><td class="id">TC-HOME-013</td><td>Add to Cart — Features Items → View Cart</td><td>Happy path</td><td><span class="status auto"><span class="dot auto"></span>New</span></td></tr>
+          <tr style="background:var(--accent-soft);"><td class="id">TC-HOME-014</td><td>Add to Cart — Features Items → Continue Shopping</td><td>Happy path (alt)</td><td><span class="status auto"><span class="dot auto"></span>New</span></td></tr>
+          <tr><td class="id">TC-HOME-015</td><td>Add to Cart — Recommended Items</td><td>Happy path</td><td><span class="status auto"><span class="dot auto"></span>Automated</span></td></tr>
+          <tr><td class="id">TC-HOME-016</td><td>Category accordion expands</td><td>UI State</td><td><span class="status skip"><span class="dot skip"></span>Not automated</span></td></tr>
+          <tr><td class="id">TC-HOME-017</td><td>Category navigation (Women &gt; Dress)</td><td>Navigation</td><td><span class="status auto"><span class="dot auto"></span>Cross-referenced</span></td></tr>
+          <tr><td class="id">TC-HOME-018</td><td>Brand navigation + add to cart (Polo)</td><td>Navigation + Happy</td><td><span class="status auto"><span class="dot auto"></span>Cross-referenced</span></td></tr>
+          <tr><td class="id">TC-HOME-019</td><td>Hero carousel manual navigation</td><td>UI State</td><td><span class="status skip"><span class="dot skip"></span>Not automated</span></td></tr>
+          <tr><td class="id">TC-HOME-020</td><td>Scroll-to-top button</td><td>UI State</td><td><span class="status skip"><span class="dot skip"></span>Not automated</span></td></tr>
+          <tr><td class="id">TC-HOME-021</td><td>Ad overlays don't block interactions</td><td>Resilience</td><td><span class="status skip"><span class="dot skip"></span>Mitigated structurally</span></td></tr>
+          <tr style="background:var(--accent-soft);"><td class="id">TC-HOME-022</td><td>No broken product images (Features + Recommended)</td><td>Negative / integrity</td><td><span class="status auto"><span class="dot auto"></span>New</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">05</span> Verification run</h2>
+    <p class="lede">Full <code>home.spec.ts</code> suite executed against the live site after the change — all 15 tests pass, including all three new ones. The two "Add to Cart" tests were also run <code>--headed</code> so the flow could be watched in a real browser window.</p>
+    <div class="term">
+      <div class="cmd">$ npx playwright test home.spec.ts --project=chromium --workers=2</div>
+      <div class="dim">Running 15 tests using 2 workers</div>
+      <div class="pass">✓ Subscription Test</div>
+      <div class="pass">✓ Verifiying the test case page</div>
+      <div class="pass">✓ home page displays featured items section on initial load</div>
+      <div class="pass">✓ home page footer subscription section is visible before interaction</div>
+      <div class="pass">✓ clicking Products nav item navigates to products page</div>
+      <div class="pass">✓ clicking Cart nav item navigates to cart page</div>
+      <div class="pass">✓ clicking Signup / Login nav item navigates to login page</div>
+      <div class="pass">✓ clicking Contact us nav item navigates to contact page</div>
+      <div class="pass">✓ subscription with invalid email format shows no success message</div>
+      <div class="pass">✓ subscription with empty email field does not show success message</div>
+      <div class="pass">✓ subscription succeeds after correcting an invalid email entry</div>
+      <div class="pass">✓ Add to Cart from Recommended Items: product added from recommended section appears in cart</div>
+      <div class="pass">✓ Add to Cart from Features Items: product added from features grid appears in cart <span class="dim">(new · run headed)</span></div>
+      <div class="pass">✓ Add to Cart from Features Items: Continue Shopping keeps user on homepage <span class="dim">(new · run headed)</span></div>
+      <div class="pass">✓ Product images on homepage: no broken images in Features Items or Recommended Items <span class="dim">(new)</span></div>
+      <div class="dim" style="margin-top:8px;">15 passed (35.8s)</div>
+    </div>
+  </section>
+
+  <footer>
+    Full evidence trail lives in docs/test-cases/homepage-test-cases.md and docs/RTM.md — this report is a summary view on top of those, kept in sync with each change to the homepage automation.
+  </footer>
+
+</div>
