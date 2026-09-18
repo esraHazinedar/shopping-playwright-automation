@@ -110,6 +110,23 @@ export class LoginSignUpPage {
     }
 
 
+    async signUpUserWithExistingEmail(name: string, email: string) {
+        await expect(this.page.getByText('New User Signup!')).toBeVisible()
+
+        const signUpForm = this.page.locator('.signup-form');
+        const nameInputBox = signUpForm.getByPlaceholder('Name')
+        const emailInputBox = signUpForm.getByPlaceholder('Email Address')
+        const signUpButton = signUpForm.getByRole('button', { name: 'Signup' })
+        await nameInputBox.click()
+        await nameInputBox.fill(name)
+        await emailInputBox.click()
+        await emailInputBox.fill(email)
+        await signUpButton.click()
+        // Duplicate email: the site stays on this page and shows this error instead of advancing
+        await expect(this.page.getByText('Email Address already exist!')).toBeVisible({ timeout: 15000 })
+    }
+
+
     async deleteAccount() {
         const continueButton = this.page.getByRole('link', { name: 'Continue', exact: true });
         await continueButton.waitFor({ state: 'visible', timeout: 10000 });

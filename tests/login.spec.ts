@@ -105,7 +105,7 @@ test('Register User With and Existing Email', async ({ page,loginPage }) => {
   //we can use timeout for a test 
     // test.setTimeout(10000)
     //test.slow() will inceasr the timeout of timeout from config multiplying with ten seconds
-    await loginPage.toLoginPage.signUpUser('Ezra', 'test@test.com');
+    await loginPage.toLoginPage.signUpUserWithExistingEmail('Ezra', 'test@test.com');
 
   await page.screenshot({ path: 'screenshots/loginPage.png' });
 
