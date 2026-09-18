@@ -10,6 +10,29 @@ Established 2026-09-18 while adding homepage Add-to-Cart and broken-image
 coverage. These rules govern `docs/` and how it relates to `tests/` and
 `page-objects/`.
 
+## 0. Zero fabrication — non-negotiable
+
+Nothing in `docs/test-cases/*.md`, `docs/RTM.md`, or `docs/reports/*.html`
+may describe a test case, mapping, result, or piece of evidence that
+wasn't actually verified. Concretely:
+
+- A test case is only documented if the behavior it describes was actually
+  observed — either a real automated test that exists right now, or a
+  behavior confirmed directly against the live/local application.
+- An RTM row claiming "Automated" must name a real file, test title, and
+  method — confirmed with `grep`/`Read` in the same session the row is
+  written, not recalled from memory of an earlier session.
+- Pass/fail results and test output in the HTML report must come from an
+  actual test run executed in that session — never estimated, never
+  carried forward from a previous run without re-running.
+- "Evidence" describes something actually done (a real exploration step,
+  a real `curl` check, a real screenshot) — never a plausible-sounding
+  description of what evidence would look like if it existed.
+- If something can't be verified, the doc says so explicitly ("not
+  verified this run", "unconfirmed") rather than presenting a guess as
+  settled fact. An honest gap is always preferable to a confident-sounding
+  fabrication.
+
 ## 1. Before adding a new test, check the whole repo first
 
 Before writing a test case or automating it, search the existing suite for
