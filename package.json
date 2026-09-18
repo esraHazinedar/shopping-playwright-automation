@@ -13,7 +13,11 @@
     "contact:prod": "npx playwright test contact.spec.ts --project=prod",
     "login:prod": "npx playwright test login.spec.ts --project=prod",
     "test:clean": "rm -rf allure-results allure-report",
-    "test:allure": "npm run test:clean && npx playwright test && allure serve allure-results"
+    "test:allure": "npm run test:clean && npx playwright test && allure serve allure-results",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up --build",
+    "docker:test": "docker-compose run --rm playwright-test npx playwright test",
+    "docker:down": "docker-compose down"
   },
   "keywords": [],
   "author": "",
