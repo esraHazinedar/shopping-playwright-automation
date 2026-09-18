@@ -101,3 +101,19 @@ test('Add to Cart from Recommended Items: product added from recommended section
     await homePage.toHomePage.addToCartFromRecommendedItems();
 });
 
+// ─── Add to Cart from Features Items ─────────────────────────────────────────
+
+test('Add to Cart from Features Items: product added from features grid appears in cart', async ({ homePage }) => {
+    await homePage.toHomePage.addToCartFromFeaturesItemsAndViewCart();
+});
+
+test('Add to Cart from Features Items: Continue Shopping keeps user on homepage', async ({ homePage }) => {
+    await homePage.toHomePage.addToCartFromFeaturesItemsAndContinueShopping();
+});
+
+// ─── Product Image Integrity ─────────────────────────────────────────────────
+
+test('Product images on homepage: no broken images in Features Items or Recommended Items', async ({ homePage }) => {
+    await homePage.toHomePage.verifyNoBrokenProductImages();
+});
+

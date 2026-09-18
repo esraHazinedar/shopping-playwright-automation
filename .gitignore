@@ -28,3 +28,6 @@ allure-results/
 
 # Personal interview prep (not part of framework)
 interview-readiness.md
+
+# Session change-summary reports (point-in-time snapshots, not living docs)
+docs/reports/
