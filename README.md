@@ -6,6 +6,22 @@ End-to-end test automation framework for [AutomationExercise](https://automation
 
 ---
 
+## Framework Capabilities
+
+### What's Included
+
+- ✅ **21 product tests** covering e-commerce workflows (search, detail, add-to-cart, checkout, payment, order confirmation, invoice download)
+- ✅ **Cross-browser testing** (Chromium, Firefox, Safari, mobile iPhone 13 Pro)
+- ✅ **PageManager architecture** — centralized, reusable page object access for maintainability
+- ✅ **Custom fixtures** with pre-configured ad-blocking and per-section navigation
+- ✅ **Docker containerization** with pinned Playwright version for CI/local consistency
+- ✅ **Full test artifacts** (video, screenshot, trace) for debugging via Playwright CLI
+- ✅ **Live-site testing** against a real, shared public website (not mocks) — trains resilience to timing and availability issues
+- ✅ **Performance testing** with Apache JMeter and parameterized load scenarios
+- ✅ **HTML reporting** built-in; Allure reporter optional
+
+---
+
 ## Tech Stack
 
 | Layer | Tool |
@@ -121,14 +137,28 @@ npm run cart-all
 npx playwright show-report
 ```
 
-### Docker
+### Docker (CI/Local Development)
+
+This framework is fully containerized for consistent execution across local and CI environments.
 
 ```bash
-# Build and run the product suite on Firefox inside a container
-docker-compose up --build
+# Build and run the product suite inside a container
+npm run docker:build      # Build the Docker image
+npm run docker:up         # Build and run product tests in Docker
+npm run docker:test       # Run full test suite in Docker
+npm run docker:down       # Stop and remove containers
 ```
 
-The compose file mounts `playwright-report/` and `test-results/` so reports are available on the host after the run.
+**How it works:**
+- **Dockerfile** pins exact Playwright version (`v1.60.0-noble`) to guarantee browser binary compatibility
+- **docker-compose.yaml** mounts report directories (`playwright-report/`, `test-results/`) to the host — so reports survive container cleanup
+- **Version alignment rule:** `@playwright/test` in `package.json` must match the Dockerfile base image tag. If they drift, `npm install` inside the container pulls a mismatched browser binary version, causing launch failures.
+- **Docker Compose V2:** this project uses `docker compose` (modern, no hyphen). If your CI agent only has `docker-compose` (legacy V1), update the npm scripts in `package.json` accordingly.
+
+**Benefits:**
+- Reproducible runs: same Playwright/browser versions whether running locally or on Jenkins/GitHub Actions
+- Isolation: tests run in a dedicated container with all dependencies pre-baked, no "works on my machine" issues
+- CI-ready: the same `Dockerfile` and scripts work in any CI system (Jenkins, GitHub Actions, GitLab CI) without modification
 
 ---
 
@@ -139,6 +169,35 @@ npm run test:performance
 ```
 
 Runs `tests/performance/test-plans/add-to-cart.jmx` using `tests/performance/data/products.csv` for parameterisation. Results and an HTML report are written to `tests/performance/results/`.
+
+---
+
+## Debugging & Test Analysis
+
+When a test fails, Playwright automatically captures rich diagnostic data:
+
+```bash
+# View the interactive HTML report with pass/fail summary
+npx playwright show-report
+
+# Analyze a specific failed test using Playwright trace viewer
+npx playwright show-trace test-results/<test-name>/trace.zip
+```
+
+**Failure artifacts (captured automatically for each test):**
+- **Screenshot** — visual state at the moment of failure
+- **Video** — full recording of the entire test execution (helpful for flaky/timing issues)
+- **Trace** — browser timeline with DOM snapshots, network calls, and action history (most detailed; use `npx playwright show-trace` to inspect)
+- **Error context** — exact assertion + page content snapshot at failure
+
+**Debugging workflow:**
+1. Run `npx playwright test` → tests fail
+2. Open `npx playwright show-report` → see visual summary of failures
+3. Click into the failed test → view screenshot, video, trace links
+4. Use `npx playwright show-trace trace.zip` → inspect DOM state and network calls at each step
+5. Determine: is this a code bug, a live-site issue (rate-limiting, slow server), or a timing/flake?
+
+This framework is designed for live-site testing, so **not all failures are bugs**. Rate-limiting, network slowness, and external site changes are real conditions you'll encounter. The trace viewer helps distinguish between actual logic errors and environmental issues.
 
 ---
 
